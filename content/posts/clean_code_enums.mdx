@@ -13,7 +13,7 @@ The below code shows a simple `Game` class, that has a difficulty as an attribut
 [dataclass](https://docs.python.org/3/library/dataclasses.html) feature.
 
 The code simply outputs the difficulty of the current game. A difficulty can either be ``Easy``, ``Medium`` or ``Hard``. 
-If an invalid difficulty is passed a ``ValueError`` raised.
+If an invalid difficulty is set a ``ValueError`` is raised.
 
 ```python
 from dataclasses import dataclass
@@ -67,7 +67,8 @@ class Difficulties(Enum):
     HARD = "Hard"
 ```
 
-We can call that enum and access any of its attributes, like this:
+We can call that enum and access its ``.name`` *(returns name of enum attribute)* and 
+``.value`` *(returns value of enum attribute)* attributes, like this:
 ```python
 print(Difficulties.HARD.name)
 HARD
@@ -77,6 +78,14 @@ Hard
 ```
 
 We can remove the three if statements after we recode the difficulty setter function parameter to accept ``Difficulties``.
+
+```python
+@difficulty.setter
+def difficulty(self, difficulty: str):
+    if difficulty != "Easy" or difficulty != "Medium" or difficulty != "Hard":
+        raise ValueError("Invalid difficulty supplied: {}".format(difficulty))
+    self.__difficulty = difficulty
+```
 
 ```python
 @difficulty.setter
@@ -109,7 +118,7 @@ class Difficulties(AutoTitleName):
 ```
 
 ```python
-print(Difficulties.MEDIUM)
+print(Difficulties.MEDIUM.value)
 Medium
 ```
 
@@ -152,7 +161,7 @@ The difficulty current is: Easy
 Ta-da, look how much easier it is to read and maintain the code 🤩. 
 
 ## Enum Hack
-Personally, I find the ``.name`` and ``.value`` enum properties ugly and prefer to access the .value directly, like this:
+Personally, I find the ``.name`` and ``.value`` enum properties ugly and prefer to access the ``.value`` directly, like this:
 
 ```python
 print(Difficulties.EASY)
@@ -196,4 +205,4 @@ other projects might store objects in their Enums such as a ``Pathlib`` object a
 and not a type ``__str__`` would reduce overhead and complexity.
 
 ## Conclusion
-Hopefully this first blog post showed you how utilising enums can produce beautiful clean code 😃.
+Hopefully, this first blog post showed you how utilising enums can produce beautiful clean code 😃.
