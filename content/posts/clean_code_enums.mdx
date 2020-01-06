@@ -1,0 +1,208 @@
+---
+title: Clean Code - Enums
+date: 2019-12-22
+---
+
+Enums are a powerful data type that allow for a variable to be a set of predefined constants. They help improve 
+`code readability`, `enforce correct values` and also help adhere to the `DRY` software development principle.
+
+Let me show you what I mean with code examples 🤓!
+
+## Code without using a Enum
+The below code shows a simple `Game` class, that has a difficulty as an attribute, coded in Python 3.7 utilising the 
+[dataclass](https://docs.python.org/3/library/dataclasses.html) feature.
+
+The code simply outputs the difficulty of the current game. A difficulty can either be ``Easy``, ``Medium`` or ``Hard``. 
+If an invalid difficulty is set a ``ValueError`` is raised.
+
+```python
+from dataclasses import dataclass
+
+@dataclass
+class Game:
+    """
+    Three difficulties: 
+      "Easy",
+      "Medium",
+      "Hard"
+    """
+    __difficulty: str
+
+    @property
+    def difficulty(self) -> str:
+        return "The difficulty current is: {}".format(self.__difficulty)
+    
+    @difficulty.setter
+    def difficulty(self, difficulty: str):
+        if difficulty != "Easy" or difficulty != "Medium" or difficulty != "Hard":
+            raise ValueError("Invalid difficulty supplied: {}".format(difficulty))
+        self.__difficulty = difficulty
+
+
+if __name__ == "__main__":
+    game = Game("Easy")
+    print(game.difficulty)
+```
+```
+The difficulty current is: Easy
+```
+
+## Code using a Enum
+Lets refactor the above code utilising enumartion to make it more ``readable`` and ``maintainable`` ✨.
+
+Maintainability is increased because we will only need to update a difficulty value in one place. 
+Additionally we can `easily add another difficulty` without the need for additional if statements, due to ``enforced values``.
+
+If we create a Enum called Difficulties with three attributes; ``EASY``, ``MEDIUM`` and ``HARD`` 
+we can pass one of those Enum values into a Game object. 
+
+So lets code a Enum 🤓.
+
+```python
+from enum import Enum
+
+class Difficulties(Enum):
+    EASY = "Easy"
+    MEDIUM = "Medium"
+    HARD = "Hard"
+```
+
+We can call that enum and access its ``.name`` *(returns name of enum attribute)* and 
+``.value`` *(returns value of enum attribute)* attributes, like this:
+```python
+print(Difficulties.HARD.name)
+HARD
+
+print(Difficulties.HARD.value)
+Hard
+```
+
+We can remove the three if statements after we recode the difficulty setter function parameter to accept ``Difficulties``.
+
+```python
+@difficulty.setter
+def difficulty(self, difficulty: str):
+    if difficulty != "Easy" or difficulty != "Medium" or difficulty != "Hard":
+        raise ValueError("Invalid difficulty supplied: {}".format(difficulty))
+    self.__difficulty = difficulty
+```
+
+```python
+@difficulty.setter
+def difficulty(self, difficulty: Difficulties):
+    self.__difficulty = difficulty
+```
+
+Way cleaner right? 😎
+
+## Enum Automation
+Personally, I found it annoying assigning each enum attribute a value.
+Therefore, I created a class overriding the ``_generate_next_value_()`` function used by the 
+[auto()](https://docs.python.org/3/library/enum.html#using-automatic-values) enum function, 
+to automatically generate values.
+
+It simply returns the enum ``.name`` value
+[titled](https://docs.python.org/3/library/stdtypes.html#str.title) 😮.
+
+```python
+from enum import Enum, auto
+
+class AutoTitleName(Enum):
+  def _generate_next_value_(name, start, count, last_values):
+    return name.title()
+
+class Difficulties(AutoTitleName):
+    EASY = auto()
+    MEDIUM = auto()
+    HARD = auto()
+```
+
+```python
+print(Difficulties.MEDIUM.value)
+Medium
+```
+
+Looks pretty neat to me. Now lets put it all together 👍:
+
+```python
+from dataclasses import dataclass
+from enum import Enum, auto
+
+class AutoTitleName(Enum):
+  def _generate_next_value_(name, start, count, last_values):
+    return name.title()
+
+class Difficulties(AutoTitleName):
+    EASY = auto()
+    MEDIUM = auto()
+    HARD = auto()
+
+@dataclass
+class Game:
+    __difficulty: Difficulties
+
+    @property
+    def difficulty(self) -> str:
+        return "The difficulty current is: {}".format(self.__difficulty.value)
+    
+    @difficulty.setter
+    def difficulty(self, difficulty: Difficulties):
+        self.__difficulty = difficulty
+
+
+if __name__ == "__main__":
+    game = Game(Difficulties.EASY)
+    print(game.difficulty)
+```
+```
+The difficulty current is: Easy
+```
+
+Ta-da, look how much easier it is to read and maintain the code 🤩. 
+
+## Enum Hack
+Personally, I find the ``.name`` and ``.value`` enum properties ugly and prefer to access the ``.value`` directly, like this:
+
+```python
+print(Difficulties.EASY)
+Easy
+```
+
+To do this *"hack"* you subclass the ``EnumMeta`` class and override the 
+[\_getattribute\_](https://docs.python.org/3/reference/datamodel.html#object.__getattribute__) function 🤯. 
+
+**Note:** ``__getattribute__`` is used for all attribute access, so you have to ensure the retrieved value is an instance of the current class.
+
+Makes sense? Perfect, here is the code:
+
+```python
+from enum import Enum, auto, EnumMeta 
+
+class EnumMetaDirectValue(EnumMeta):
+    """
+    Metaclass to access a enum .value directly.
+    """
+
+    def __getattribute__(cls, name):
+        value = super().__getattribute__(name)
+        if isinstance(value, cls):
+            value = value.value
+        return value
+
+class Difficulties(AutoTitleName, metaclass=EnumDirectValueMeta):
+    EASY = auto()
+    MEDIUM = auto()
+    HARD = auto()
+```
+
+```python
+print(Difficulties.EASY)
+Easy
+```
+
+Now you might argue why not just override the ``__str__`` function? Well for this example it would work but, 
+other projects might store objects in their Enums such as a ``Pathlib`` object and returning the actual object 
+and not a type ``__str__`` would reduce overhead and complexity.
+
+## Conclusion
+Hopefully, this first blog post showed you how utilising enums can produce beautiful clean code 😃.
