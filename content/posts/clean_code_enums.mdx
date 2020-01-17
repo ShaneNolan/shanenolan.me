@@ -33,7 +33,7 @@ class Game:
         return "The difficulty current is: {}".format(self.__difficulty)
     
     @difficulty.setter
-    def difficulty(self, difficulty: str):
+    def difficulty(self, difficulty: str) -> None:
         if difficulty != "Easy" or difficulty != "Medium" or difficulty != "Hard":
             raise ValueError("Invalid difficulty supplied: {}".format(difficulty))
         self.__difficulty = difficulty
@@ -81,7 +81,7 @@ We can remove the three if statements after we recode the difficulty setter func
 
 ```python
 @difficulty.setter
-def difficulty(self, difficulty: str):
+def difficulty(self, difficulty: str) -> None:
     if difficulty != "Easy" or difficulty != "Medium" or difficulty != "Hard":
         raise ValueError("Invalid difficulty supplied: {}".format(difficulty))
     self.__difficulty = difficulty
@@ -146,7 +146,7 @@ class Game:
         return "The difficulty current is: {}".format(self.__difficulty.value)
     
     @difficulty.setter
-    def difficulty(self, difficulty: Difficulties):
+    def difficulty(self, difficulty: Difficulties) -> None:
         self.__difficulty = difficulty
 
 
@@ -189,7 +189,7 @@ class EnumMetaDirectValue(EnumMeta):
             value = value.value
         return value
 
-class Difficulties(AutoTitleName, metaclass=EnumDirectValueMeta):
+class Difficulties(AutoTitleName, metaclass=EnumMetaDirectValue):
     EASY = auto()
     MEDIUM = auto()
     HARD = auto()
@@ -198,6 +198,10 @@ class Difficulties(AutoTitleName, metaclass=EnumDirectValueMeta):
 ```python
 print(Difficulties.EASY)
 Easy
+
+print(type(Difficulties.EASY))
+str
+=======
 ```
 
 Now you might argue why not just override the ``__str__`` function? Well for this example it would work but, 
