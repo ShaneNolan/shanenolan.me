@@ -4,6 +4,12 @@ module.exports = {
       resolve: `gatsby-theme-blog`,
       options: {},
     },
+    {
+      resolve: `gatsby-plugin-google-analytics`,
+      options: {
+        trackingId: "UA-41769697-13",
+      },
+    },
   ],
   siteMetadata: {
     title: `Shane Nolan`,
