@@ -1,15 +1,15 @@
 ---
 title: Clean Code - Enums
-date: 2019-12-22
+date: 2020-01-20
 ---
 
-Enums are a powerful data type that allow for a variable to be a set of predefined constants. They help improve 
+Enums are a powerful data type that allows for variables to be a set of predefined constants. They help improve 
 `code readability`, `enforce correct values` and also help adhere to the `DRY` software development principle.
 
 Let me show you what I mean with code examples 🤓!
 
 ## Code without using a Enum
-The below code shows a simple `Game` class, that has a difficulty as an attribute, coded in Python 3.7 utilising the 
+The below code shows a simple `Game` class, that has difficulty as an attribute, coded in Python 3.7 utilising the 
 [dataclass](https://docs.python.org/3/library/dataclasses.html) feature.
 
 The code simply outputs the difficulty of the current game. A difficulty can either be ``Easy``, ``Medium`` or ``Hard``. 
@@ -48,12 +48,12 @@ The difficulty current is: Easy
 ```
 
 ## Code using a Enum
-Lets refactor the above code utilising enumartion to make it more ``readable`` and ``maintainable`` ✨.
+Let's refactor the above code utilising enumeration to make it more ``readable`` and ``maintainable`` ✨.
 
 Maintainability is increased because we will only need to update a difficulty value in one place. 
-Additionally we can `easily add another difficulty` without the need for additional if statements, due to ``enforced values``.
+Additionally, we can `easily add another difficulty` without the need for additional if statements, due to ``enforced values``.
 
-If we create a Enum called Difficulties with three attributes; ``EASY``, ``MEDIUM`` and ``HARD`` 
+If we create an Enum called Difficulties with three attributes; ``EASY``, ``MEDIUM`` and ``HARD`` 
 we can pass one of those Enum values into a Game object. 
 
 So lets code a Enum 🤓.
@@ -204,7 +204,7 @@ str
 =======
 ```
 
-Now you might argue why not just override the ``__str__`` function? Well for this example it would work but, 
+Now you might argue why not just override the ``__str__`` function? Well for this example it would work but,  
 other projects might store objects in their Enums such as a ``Pathlib`` object and returning the actual object 
 and not a type ``__str__`` would reduce overhead and complexity.
 
